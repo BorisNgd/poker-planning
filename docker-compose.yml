@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: planning-poker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-poker_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Veuillez définir POSTGRES_PASSWORD dans le fichier .env}
+      POSTGRES_DB: ${POSTGRES_DB:-poker_planning}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - poker-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-poker_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    container_name: planning-poker-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - poker-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    image: ${DOCKER_USERNAME:-borisngd}/planning-poker-backend:${IMAGE_TAG:-latest}
+    container_name: planning-poker-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-poker_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-poker_planning}
+      REDIS_URL: redis://redis:6379
+      CORS_ORIGIN: ${PUBLIC_URL:-http://localhost:8080}
+      SESSION_TTL: ${SESSION_TTL:-86400}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - poker-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Application
+  frontend:
+    image: ${DOCKER_USERNAME:-borisngd}/planning-poker-frontend:${IMAGE_TAG:-latest}
+    container_name: planning-poker-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ${PUBLIC_URL:-http://localhost:8080}/api
+      VITE_WS_URL: ${PUBLIC_URL:-http://localhost:8080}
+    depends_on:
+      - backend
+    networks:
+      - poker-network
+
+  # Reverse Proxy Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: planning-poker-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-8080}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - poker-network
+
+networks:
+  poker-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

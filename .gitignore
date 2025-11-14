@@ -1,0 +1,14 @@
+fix-websocket.ps1
+--- a/quick-deploy/.gitignore
++++ b/quick-deploy/.gitignore
+@@ -1,4 +1,4 @@
+ # Ignore environment variable files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# Ignore log files
+*.log
+TROUBLESHOOTING.md
+NETWORK_SHARING.md
