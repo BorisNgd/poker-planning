@@ -44,7 +44,7 @@ docker-compose up -d
 
 ### 3. Accéder à l'application
 
-Ouvrez votre navigateur : **http://localhost:8000**
+Ouvrez votre navigateur : **http://localhost:8080**
 
 Attendez 30-60 secondes que tous les services démarrent.
 
