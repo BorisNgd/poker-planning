@@ -1,3 +1,17 @@
+## Capture d'écran
+
+### Ecran de création d'une session
+
+![Ecran création de session ](assets/login.png)
+
+### Ecran des paramètres
+
+![Ecran création de session ](assets/setting.png)
+
+### Ecran de vote
+
+![Ecran création de session ](assets/voting.png)
+
 # Quick Deploy - Planning Poker
 
 Déploiement rapide de Planning Poker depuis Docker Hub.
