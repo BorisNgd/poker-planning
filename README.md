@@ -30,7 +30,7 @@ docker-compose up -d
 
 ### 3. Accéder à l'application
 
-Ouvrez votre navigateur : **http://localhost:8080**
+Ouvrez votre navigateur : **http://localhost:8000**
 
 Attendez 30-60 secondes que tous les services démarrent.
 
@@ -112,7 +112,7 @@ docker-compose up -d
 
 **Cause** : `PUBLIC_URL` est configuré avec `localhost`, ce qui ne fonctionne que sur votre machine.
 
-**Solution** : Utilisez votre IP locale. Voir [NETWORK_SHARING.md](NETWORK_SHARING.md) pour le guide complet.
+**Solution** : Utilisez votre IP locale.
 
 Résumé rapide :
 ```bash
@@ -126,18 +126,13 @@ PUBLIC_URL=http://VOTRE_IP:8080  # ex: http://192.168.1.100:8080
 docker-compose down && docker-compose up -d
 ```
 
-Voir [TROUBLESHOOTING.md](TROUBLESHOOTING.md) pour plus de solutions.
-
 ---
 
-## 📖 Documentation complète
 
-Voir [QUICK_INSTALL.md](../QUICK_INSTALL.md) pour plus de détails.
 
 ---
 
 ## 🆘 Support
 
-- Dépannage : [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-- GitHub : https://github.com/BorisNgd/planning-poker
+- GitHub : https://github.com/BorisNgd/poker-planning
 - Docker Hub : https://hub.docker.com/u/borisngd
